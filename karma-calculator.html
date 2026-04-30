@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karma Calculator | AI Chronicles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
+        .karma-bar { transition: width 0.6s ease; }
+        .question-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .question-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-slate-950 text-white">
+
+    <nav class="fixed w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold tracking-tighter text-indigo-400 uppercase">AI Chronicles</a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="index.html#about" class="hover:text-indigo-400 transition">About</a>
+                <a href="index.html#videos" class="hover:text-indigo-400 transition">Latest Videos</a>
+                <a href="karma-calculator.html" class="text-indigo-400 border-b border-indigo-400 pb-0.5">Karma Calculator</a>
+                <a href="index.html#newsletter" class="bg-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-500 transition">Subscribe</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative min-h-screen pt-28 pb-16 gradient-bg">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <div class="text-5xl mb-4">⚖️</div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                    Karma Calculator
+                </h1>
+                <p class="text-slate-400 text-lg leading-relaxed">
+                    The universe keeps score. Answer honestly and discover where you stand on the cosmic ledger.
+                </p>
+            </div>
+
+            <div id="quiz-section">
+                <div class="space-y-6" id="questions-container"></div>
+
+                <div class="mt-10 text-center">
+                    <button id="calculate-btn"
+                        class="px-10 py-4 bg-indigo-600 rounded-full font-bold text-lg hover:bg-indigo-500 transition transform hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                        disabled>
+                        Calculate My Karma
+                    </button>
+                    <p class="text-slate-500 text-sm mt-3">Answer all questions to unlock your result</p>
+                </div>
+            </div>
+
+            <div id="result-section" class="hidden">
+                <div class="bg-slate-900 rounded-2xl border border-white/10 p-8 text-center">
+                    <div id="result-emoji" class="text-6xl mb-4"></div>
+                    <h2 id="result-title" class="text-3xl font-bold mb-2"></h2>
+                    <p id="result-subtitle" class="text-indigo-400 font-semibold uppercase tracking-widest text-sm mb-6"></p>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm text-slate-400 mb-2">
+                            <span>Chaotic</span>
+                            <span>Karma Score: <span id="score-display" class="text-white font-bold"></span></span>
+                            <span>Divine</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-4 overflow-hidden">
+                            <div id="karma-bar" class="karma-bar h-4 rounded-full bg-gradient-to-r from-red-500 via-yellow-400 to-green-400" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <p id="result-description" class="text-slate-400 leading-relaxed mb-8"></p>
+
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <button id="retake-btn"
+                            class="px-8 py-3 bg-white/10 rounded-full font-bold hover:bg-white/20 transition">
+                            Retake the Quiz
+                        </button>
+                        <a href="index.html#videos"
+                            class="px-8 py-3 bg-indigo-600 rounded-full font-bold hover:bg-indigo-500 transition text-center">
+                            Watch Karma Stories
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-white/5 text-center text-slate-500 text-sm">
+        <p>&copy; 2026 AI Chronicles. Built for the Future.</p>
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                text: "A cashier gives you too much change. What do you do?",
+                options: [
+                    { label: "Keep it — their mistake, my gain.", score: 0 },
+                    { label: "Ignore it and walk away fast.", score: 1 },
+                    { label: "Hesitate but keep it.", score: 2 },
+                    { label: "Give it back immediately.", score: 4 }
+                ]
+            },
+            {
+                id: 2,
+                text: "You witness someone being treated unfairly at work. You…",
+                options: [
+                    { label: "Say nothing — not my problem.", score: 0 },
+                    { label: "Mention it privately to the person later.", score: 2 },
+                    { label: "Speak up in the moment, politely.", score: 3 },
+                    { label: "Advocate loudly and involve management.", score: 4 }
+                ]
+            },
+            {
+                id: 3,
+                text: "A friend asks to borrow money. You know they've been irresponsible before. You…",
+                options: [
+                    { label: "Refuse without explanation.", score: 1 },
+                    { label: "Lie and say you don't have any.", score: 0 },
+                    { label: "Lend it, but set clear expectations.", score: 3 },
+                    { label: "Help them find another solution instead.", score: 4 }
+                ]
+            },
+            {
+                id: 4,
+                text: "You accidentally broke something at a friend's house. They haven't noticed. You…",
+                options: [
+                    { label: "Say nothing and hope they forget.", score: 0 },
+                    { label: "Leave an anonymous note.", score: 2 },
+                    { label: "Tell them and offer to replace it.", score: 4 },
+                    { label: "Tell them but secretly hope they decline.", score: 3 }
+                ]
+            },
+            {
+                id: 5,
+                text: "Someone cuts in line right in front of you. You…",
+                options: [
+                    { label: "Say nothing but seethe inside.", score: 2 },
+                    { label: "Loudly embarrass them.", score: 1 },
+                    { label: "Politely point out the line.", score: 3 },
+                    { label: "Let it go entirely.", score: 4 }
+                ]
+            },
+            {
+                id: 6,
+                text: "How often do you keep your promises?",
+                options: [
+                    { label: "Rarely — life gets in the way.", score: 0 },
+                    { label: "Sometimes, when it's convenient.", score: 1 },
+                    { label: "Most of the time.", score: 3 },
+                    { label: "Always, or I don't make the promise.", score: 4 }
+                ]
+            },
+            {
+                id: 7,
+                text: "You find a wallet with cash and an ID. You…",
+                options: [
+                    { label: "Take the cash, ditch the wallet.", score: 0 },
+                    { label: "Take the cash but turn in the wallet.", score: 1 },
+                    { label: "Leave it where you found it.", score: 2 },
+                    { label: "Return everything to the owner.", score: 4 }
+                ]
+            },
+            {
+                id: 8,
+                text: "When someone wrongs you, your first instinct is to…",
+                options: [
+                    { label: "Plot revenge immediately.", score: 0 },
+                    { label: "Vent to everyone you know.", score: 1 },
+                    { label: "Confront them directly.", score: 3 },
+                    { label: "Reflect and let it go.", score: 4 }
+                ]
+            }
+        ];
+
+        const results = [
+            {
+                min: 0,
+                max: 8,
+                emoji: "🔥",
+                title: "Karmic Debt Collector",
+                subtitle: "The Universe Is Watching",
+                description: "Your karma account is deeply overdrawn. The cosmic scales are tipped heavily against you. The stories on AI Chronicles were written about people like you — and they don't end well. Time for a serious audit of your choices."
+            },
+            {
+                min: 9,
+                max: 16,
+                emoji: "🌑",
+                title: "Grey Zone Dweller",
+                subtitle: "Morally Complicated",
+                description: "You operate in the shadows between good and bad. Sometimes you do right, often you take the easy path. The universe hasn't given up on you yet — but it's keeping a very close eye. Small changes now could shift your entire trajectory."
+            },
+            {
+                min: 17,
+                max: 24,
+                emoji: "⚡",
+                title: "Karma Balancer",
+                subtitle: "Neutral Force",
+                description: "You're holding your own in the karmic ledger. You mostly do right, though comfort sometimes wins over courage. Keep nudging those scales in the positive direction — the universe rewards consistent effort."
+            },
+            {
+                min: 25,
+                max: 32,
+                emoji: "✨",
+                title: "Karmic Champion",
+                subtitle: "Blessed by the Universe",
+                description: "Your karma is immaculate. You consistently choose integrity over convenience, compassion over self-interest. The universe has your back — and the stories you'll inspire are ones of redemption and triumph."
+            }
+        ];
+
+        const answers = {};
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = questions.map((q, idx) => `
+                <div class="question-card bg-slate-900 rounded-2xl border border-white/10 p-6">
+                    <p class="font-semibold text-base mb-4 text-slate-200">
+                        <span class="text-indigo-400 mr-2">${idx + 1}.</span>${q.text}
+                    </p>
+                    <div class="space-y-2">
+                        ${q.options.map((opt, optIdx) => `
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input type="radio" name="q${q.id}" value="${opt.score}"
+                                    class="mt-1 accent-indigo-500 w-4 h-4 cursor-pointer"
+                                    onchange="handleAnswer(${q.id})">
+                                <span class="text-slate-400 group-hover:text-slate-200 transition text-sm leading-relaxed">${opt.label}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleAnswer(questionId) {
+            answers[questionId] = true;
+            if (Object.keys(answers).length === questions.length) {
+                document.getElementById('calculate-btn').disabled = false;
+            }
+        }
+
+        function calculateKarma() {
+            let total = 0;
+            questions.forEach(q => {
+                const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+                if (selected) total += parseInt(selected.value);
+            });
+
+            const maxScore = questions.length * 4;
+            const percentage = (total / maxScore) * 100;
+
+            const result = results.find(r => total >= r.min && total <= r.max) || results[results.length - 1];
+
+            document.getElementById('quiz-section').classList.add('hidden');
+            const resultSection = document.getElementById('result-section');
+            resultSection.classList.remove('hidden');
+
+            document.getElementById('result-emoji').textContent = result.emoji;
+            document.getElementById('result-title').textContent = result.title;
+            document.getElementById('result-subtitle').textContent = result.subtitle;
+            document.getElementById('result-description').textContent = result.description;
+            document.getElementById('score-display').textContent = `${total} / ${maxScore}`;
+
+            setTimeout(() => {
+                document.getElementById('karma-bar').style.width = `${percentage}%`;
+            }, 100);
+
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function retake() {
+            Object.keys(answers).forEach(k => delete answers[k]);
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('calculate-btn').disabled = true;
+            document.getElementById('karma-bar').style.width = '0%';
+            renderQuestions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('calculate-btn').addEventListener('click', calculateKarma);
+        document.getElementById('retake-btn').addEventListener('click', retake);
+
+        renderQuestions();
+    </script>
+
+</body>
+</html>
